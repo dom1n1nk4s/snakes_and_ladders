@@ -10,11 +10,7 @@ boolean isHoldingPressed = false;
 
 Drawable currentGameActivity;
 
-class PlayTable extends BaseTable{
 
-    PlayTable(int playerCount){
-    }
-}
 
 class PlayPlayerMenu extends baseMenu {
 
@@ -23,19 +19,19 @@ class PlayPlayerMenu extends baseMenu {
 
     buttons[0] = new Button(0, "1", new FunctionCarrier() {
       public void function() {
-        currentGameActivity = new PlayTable(1);
+        currentGameActivity = new PlayTable(currentTable,1);
       }
     }
     );
     buttons[1] = new Button(1, "2", new FunctionCarrier() {
       public void function() {
-        currentGameActivity = new PlayTable(2);
+        currentGameActivity = new PlayTable(currentTable,2);
       }
     }
     );
     buttons[2] = new Button(2, "3", new FunctionCarrier() {
       public void function() {
-        currentGameActivity = new PlayTable(3);
+        currentGameActivity = new PlayTable(currentTable,3);
       }
     }
     );

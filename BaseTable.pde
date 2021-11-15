@@ -86,9 +86,9 @@ class Node {
 }
 
 class BaseTable implements Drawable {
-  LinkedList<Node> table;
-  Node selectedNode;
-  LinkedList<Portal> portals;
+  protected LinkedList<Node> table;
+
+  protected LinkedList<Portal> portals;
   BaseTable() {
     table = new LinkedList<Node>();
     columns = (int) sqrt(ntable);

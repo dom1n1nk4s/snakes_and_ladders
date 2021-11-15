@@ -1,4 +1,4 @@
-class CreationStartNew extends baseMenu { //<>//
+class CreationStartNew extends baseMenu { //<>// //<>//
   public CreationStartNew() {
     super(2);
 
@@ -63,6 +63,7 @@ class CreationEnterN implements Drawable {
 }
 
 class CreationTable extends BaseTable {
+  private Node selectedNode;
   private Node portalStartNode;
   private boolean newestVersionExported = false;
   public CreationTable() {
@@ -86,12 +87,11 @@ class CreationTable extends BaseTable {
     text("SPACE - Add/Remove shortcut", width /2, MARGIN);
     textAlign(RIGHT);
     text("Q - Back to mainmenu", width-MARGIN, MARGIN);
-    
-    if(newestVersionExported){
+
+    if (newestVersionExported) {
       textAlign(CENTER);
-      text("Table has been exported",width/2,height-MARGIN/2);
+      text("Table has been exported", width/2, height-MARGIN/2);
     }
-    
   }
   private boolean sameStartCoords(Portal p, Node n) {
     return  p.sx == n.x + n.xsize /2 && p.sy == n.y + n.ysize / 2;
@@ -122,7 +122,7 @@ class CreationTable extends BaseTable {
         } else if (portalStartNode != null && portalStartNode.y != selectedNode.y) {
           portals.add(new Portal(portalStartNode, selectedNode));
           portalStartNode.isPortal = true;
-          portalStartNode.portalExitIndex = selectedNode.index;
+          portalStartNode.portalExitIndex = selectedNode.index-1;
           portalStartNode =null;
           newestVersionExported = false;
         } else if (portalStartNode == selectedNode) {
@@ -130,20 +130,22 @@ class CreationTable extends BaseTable {
           portalStartNode = null;
         }
       } else if (key == 'q' || key == 'Q') {
+        selectedNode.isSelected = false;
         currentTable = (BaseTable) this;
+        
         currentGameActivity = new MainMenu();
       } else if (key == 'e' || key == 'E') {
-        if(!newestVersionExported){
-        PrintWriter file = createWriter( Integer.toString((((((year()-1970)*365+day())*24+hour())*60+minute())*60+second())*1000+millis()) + ".txt" ); //  NOT A UNIX TIMESTAMP AND NOT MEANT TO BE ONE
-        file.println(ntable);
-         for(Portal x : portals)
+        if (!newestVersionExported) {
+          PrintWriter file = createWriter( Integer.toString((((((year()-1970)*365+day())*24+hour())*60+minute())*60+second())*1000+millis()) + ".txt" ); //  NOT A UNIX TIMESTAMP AND NOT MEANT TO BE ONE
+          file.println(ntable);
+          for (Portal x : portals)
           {
             file.println(x.si + " " + x.ei);
           }
 
-        file.flush();
-        file.close();
-        newestVersionExported = true;
+          file.flush();
+          file.close();
+          newestVersionExported = true;
         }
       }
     }
@@ -153,7 +155,7 @@ class CreationTable extends BaseTable {
 
     int columnIndex = columns - (selectedNode.index - 1) % columns ;
 
-    int nToMove = 2*columnIndex -1;
+    int nToMove = 2*columnIndex -1; // steps to move
     if (q == 1) {
       nToMove = -(2*columns - nToMove);
     }
@@ -173,14 +175,14 @@ class CreationTable extends BaseTable {
   private void moveHorizontal(int q) {
     selectedNode.isSelected = false;
 
-    int cRowIndex = ceil(float(selectedNode.index)/columns);
+    int cRowIndex = ceil(float(selectedNode.index)/columns); //current row index
 
     if (cRowIndex % 2 == 0)
       q*=-1;
 
-    int fRowIndex = ceil(float(selectedNode.index +q)/columns);
+    int fRowIndex = ceil(float(selectedNode.index +q)/columns); // future row index
 
-    selectedNode = table.get(selectedNode.index -1 + q + (cRowIndex != fRowIndex ? -q*columns : 0 )); //absolutely beautiful
+    selectedNode = table.get(selectedNode.index -1 + q + (cRowIndex != fRowIndex ? -q*columns : 0 ));
 
     selectedNode.isSelected = true;
 
