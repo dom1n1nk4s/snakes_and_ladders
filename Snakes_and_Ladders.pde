@@ -1,4 +1,4 @@
-import java.util.LinkedList; //<>//
+import java.util.LinkedList; //<>// //<>//
 
 BaseTable currentTable;
 int ntable;
@@ -10,64 +10,33 @@ boolean isHoldingPressed = false;
 
 Drawable currentGameActivity;
 
-
-
-class PlayPlayerMenu extends baseMenu {
-
-  PlayPlayerMenu() {
-    super(3);
-
-    buttons[0] = new Button(0, "1", new FunctionCarrier() {
-      public void function() {
-        currentGameActivity = new PlayTable(currentTable,1);
-      }
-    }
-    );
-    buttons[1] = new Button(1, "2", new FunctionCarrier() {
-      public void function() {
-        currentGameActivity = new PlayTable(currentTable,2);
-      }
-    }
-    );
-    buttons[2] = new Button(2, "3", new FunctionCarrier() {
-      public void function() {
-        currentGameActivity = new PlayTable(currentTable,3);
-      }
-    }
-    );
-    selectedButton = buttons[1];
-    selectedButton.selected = true;
-  }
-  void draw() {
-    super.draw();
-    
-    textAlign(CENTER);
-    text("Player count",width/2, height-MARGIN);
-  }
+interface Drawable {
+  public void draw();
 }
 
-class MainMenu extends baseMenu {
+
+class MainMenu extends BaseMenu {
 
   MainMenu() {
     super(3);
-    buttons[0] = new Button(0, "Play", new FunctionCarrier() {
+    buttons[0] =new Button(0, "Play", new FunctionCarrier() {
       public void function() {
         if (ntable != 0) {
           currentGameActivity = new PlayPlayerMenu();
         } else {
-          errorMessage = "Map must first be created / imported.";
+          errorMessage= "Map must first be created / imported.";
           errorTime = millis() + 2000;
         }
       }
     }
     );
-    buttons[1] = new Button(1, "Create", new FunctionCarrier() {
+    buttons[1] =new Button(1, "Create", new FunctionCarrier() {
       public void function() {
         currentGameActivity = new CreationMenu();
       }
     }
     );
-    buttons[2] = new Button(2, "Quit", new FunctionCarrier() {
+    buttons[2] =new Button(2, "Quit", new FunctionCarrier() {
       public void function() {
         exit();
       }
@@ -79,9 +48,11 @@ class MainMenu extends baseMenu {
 
   void draw() {
     super.draw();
+    text("SPACE to select", width / 4, height - 3 * MARGIN);
+    text("ARROW KEYS to move", width - width / 4, height - 3 * MARGIN);
   }
 }
-class CreationMenu extends baseMenu {
+class CreationMenu extends BaseMenu {
   CreationMenu() {
     super(3);
     buttons[0] = new Button(0, "Import", new FunctionCarrier() {
@@ -101,7 +72,7 @@ class CreationMenu extends baseMenu {
     );
     buttons[2] = new Button(2, "Back", new FunctionCarrier() {
       public void function() {
-        currentGameActivity =new MainMenu();
+        currentGameActivity = new MainMenu();
       }
     }
     );
@@ -126,14 +97,12 @@ void fileSelected(File selection) {
       if (array.length > 2) throw new Exception();
       int si = Integer.parseInt(array[0]);
       int ei = Integer.parseInt(array[1]);
-      if (si > ntable || ei > ntable || si < 1 || ei < 1) throw new Exception();
-      Node startNode = creationTable.table.get(si-1);
-      Node endNode = creationTable.table.get(ei-1);
+      if (si> ntable || ei > ntable || si < 1 || ei < 1) throw new Exception();
+      Node startNode = creationTable.table.get(si - 1);
+      Node endNode = creationTable.table.get(ei - 1);
       startNode.isPortal = true;
       creationTable.addPortal(new Portal(startNode, endNode));
     }
-
-
     r.close();
     currentGameActivity = creationTable;
   }
@@ -146,18 +115,14 @@ void fileSelected(File selection) {
 void keyReleased() {
   isHoldingPressed = false;
 }
-
 void setup() {
   size(1024, 768);
   WIDTH = width;
   HEIGHT = height;
-  MARGIN = int((width+height)*0.025);
+  MARGIN = int((width + height) * 0.025);
   background(color(255));
   currentGameActivity = new MainMenu();
   strokeWeight(6);
-
-
-  //selectInput("Select a file to import", "fileSelected");
 }
 void draw() {
   background(0);
