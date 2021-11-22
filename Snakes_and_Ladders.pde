@@ -1,4 +1,4 @@
-import java.util.LinkedList; //<>// //<>//
+import java.util.LinkedList; //<>// //<>// //<>// //<>//
 
 BaseTable currentTable;
 int ntable;
@@ -13,7 +13,6 @@ Drawable currentGameActivity;
 interface Drawable {
   public void draw();
 }
-
 
 class MainMenu extends BaseMenu {
 
@@ -52,12 +51,13 @@ class MainMenu extends BaseMenu {
     text("ARROW KEYS to move", width - width / 4, height - 3 * MARGIN);
   }
 }
-class CreationMenu extends BaseMenu {
+public class CreationMenu extends BaseMenu {
+  CreationMenu cm = this; // needed for callbackObject selectInput
   CreationMenu() {
     super(3);
     buttons[0] = new Button(0, "Import", new FunctionCarrier() {
       public void function() {
-        inp();
+        selectInput("Select a file to import", "fileSelected", null, cm);
       }
     }
     );
@@ -79,39 +79,41 @@ class CreationMenu extends BaseMenu {
     selectedButton = buttons[1];
     selectedButton.selected = true;
   }
+  public void fileSelected(File selection) {
+    BufferedReader r;
+    try {
+      r = createReader(selection);
+      String line = r.readLine();
+      ntable = Integer.parseInt(line);
+      if (ntable < 7) throw new Exception();
+      CreationTable creationTable = new CreationTable();
+      while ((line = r.readLine()) != null) {
+        String[] array = line.split(" ");
+        if (array.length > 2) throw new Exception();
+        int si = Integer.parseInt(array[0]);
+        int ei = Integer.parseInt(array[1]);
+        if (si> ntable || ei > ntable || si < 1 || ei < 1 || si == ei) throw new Exception();
+        /*would probably be wise to add a check whether a portal's entrance and exit is on the same row,
+         but that would be bad ux since the user doesnt know what the table's dimensions will be*/
+
+        Node startNode = creationTable.table.get(si - 1);
+        if(startNode.isPortal) throw new Exception();
+        Node endNode = creationTable.table.get(ei - 1);
+        creationTable.addPortal(new Portal(startNode, endNode));
+      }
+      r.close();
+      currentGameActivity = creationTable;
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+      errorMessage = "Failed to import map";
+      errorTime = millis() + 2000;
+    }
+  }
 }
 
-void inp() {
-  selectInput("Select a file to import", "fileSelected");
-}
-void fileSelected(File selection) {
-  BufferedReader r;
-  try {
-    r = createReader(selection);
-    String line = r.readLine();
-    ntable = Integer.parseInt(line);
-    if (ntable < 7) throw new Exception();
-    CreationTable creationTable = new CreationTable();
-    while ((line = r.readLine()) != null) {
-      String[] array = line.split(" ");
-      if (array.length > 2) throw new Exception();
-      int si = Integer.parseInt(array[0]);
-      int ei = Integer.parseInt(array[1]);
-      if (si> ntable || ei > ntable || si < 1 || ei < 1) throw new Exception();
-      Node startNode = creationTable.table.get(si - 1);
-      Node endNode = creationTable.table.get(ei - 1);
-      startNode.isPortal = true;
-      creationTable.addPortal(new Portal(startNode, endNode));
-    }
-    r.close();
-    currentGameActivity = creationTable;
-  }
-  catch(Exception e) {
-    e.printStackTrace();
-    //errorMessage = "Failed to import map"; // TODO MAKE ERROR MESSAGE GLOBAL OR TRY REDIRECTING SELECTINPUT TO CLASS METHOD INSTEAD OF THIS STATIC METHOD
-    //errorTime = millis() + 2000;
-  }
-}
+
+
 void keyReleased() {
   isHoldingPressed = false;
 }

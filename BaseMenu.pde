@@ -1,9 +1,9 @@
 class BaseMenu implements Drawable {
+  String errorMessage = null;
+  int errorTime;
   protected int n;
   protected Button[] buttons;
   protected Button selectedButton;
-  protected String errorMessage = null;
-  protected int errorTime;
 
   private void displayError() {
     if (millis() < errorTime) {

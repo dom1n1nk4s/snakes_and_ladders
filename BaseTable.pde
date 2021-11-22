@@ -4,8 +4,9 @@ class BaseTable implements Drawable {
   protected LinkedList<Portal> portals;
   BaseTable() {
     table = new LinkedList<Node>();
-    columns = (int) sqrt(ntable);
-    rows = ceil(ntable * 1.0 / columns);
+    rows = (int) sqrt(ntable);
+    columns = ceil(ntable * 1.0 / rows);
+
     for (int i = 1; i <= ntable; i++) {
       table.add(new Node((width - 3 * MARGIN) / columns, (height - 3 * MARGIN) / rows, i));
     }
@@ -16,7 +17,9 @@ class BaseTable implements Drawable {
   }
   public void addPortal(Portal p) {
     portals.add(p);
-    table.get(p.si).isPortal = true;
+    Node startNode = table.get(p.si-1);
+    startNode.isPortal = true;
+    startNode.portalExitIndex = p.ei-1;
   }
   void draw() {
     for (Node x : table) {

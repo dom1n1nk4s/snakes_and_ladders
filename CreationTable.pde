@@ -66,6 +66,7 @@ class CreationTable extends BaseTable {
   private Node selectedNode;
   private Node portalStartNode;
   private boolean newestVersionExported = false;
+  private String fileName;
   public CreationTable() {
     super();
     selectedNode = table.getFirst();
@@ -90,7 +91,7 @@ class CreationTable extends BaseTable {
 
     if (newestVersionExported) {
       textAlign(CENTER);
-      text("Table has been exported", width / 2, height - MARGIN / 2);
+      text("Table has been exported as "+fileName, width / 2, height - MARGIN / 2);
     }
   }
   private boolean sameStartCoords(Portal p, Node n) {
@@ -136,7 +137,8 @@ class CreationTable extends BaseTable {
         currentGameActivity = new MainMenu();
       } else if (key == 'e' || key == 'E') {
         if (!newestVersionExported) {
-          PrintWriter file = createWriter(Integer.toString((((((year() - 1970) * 365 + day()) * 24 + hour()) * 60 + minute()) * 60 + second()) * 1000 + millis()) + ".txt"); //  NOT A UNIX TIMESTAMP AND NOT MEANT TO BE ONE
+          fileName = Integer.toString((((((year() - 1970) * 365 + day()) * 24 + hour()) * 60 + minute()) * 60 + second()) * 1000 + millis()) + ".txt";
+          PrintWriter file = createWriter(fileName); //  NOT A UNIX TIMESTAMP AND NOT MEANT TO BE ONE
           file.println(ntable);
           for (Portal x : portals)
           {
