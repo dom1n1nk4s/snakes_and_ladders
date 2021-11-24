@@ -45,6 +45,7 @@ class PlayTable extends BaseTable {
   gameState currentState = gameState.Rolling;
   int rolledNum;
   int rolledTime;
+  float xSlopeCoeficient, ySlopeCoeficient;
 
   PlayTable(BaseTable baseTable, int playerCount) {
     super();
@@ -70,6 +71,16 @@ class PlayTable extends BaseTable {
     xdest = temp.x + temp.xsize / 2;
     ydest = temp.y + temp.ysize / 2;
     currentlyPlayingPlayer.tIndex = tIndex;
+
+    int ticksRequiredToArrive = max(abs(currentlyPlayingPlayer.x-xdest)/speedPerTick, abs(currentlyPlayingPlayer.y-ydest)/speedPerTick);
+    if (ticksRequiredToArrive != 0) {
+      xSlopeCoeficient = (abs(currentlyPlayingPlayer.x-xdest)*1.0/(speedPerTick*ticksRequiredToArrive)); //<>//
+      ySlopeCoeficient = (abs(currentlyPlayingPlayer.y-ydest)*1.0/(speedPerTick*ticksRequiredToArrive));
+    }
+    else{
+      xSlopeCoeficient = 0;
+      ySlopeCoeficient = 0;
+    }
   }
 
   void draw() {
@@ -120,9 +131,9 @@ class PlayTable extends BaseTable {
           rolledNum--;
         }
       } else { //keep moving towards it
-        currentlyPlayingPlayer.x += speedPerTick * (xdest < currentlyPlayingPlayer.x ? - 1 : (abs(xdest - currentlyPlayingPlayer.x)  <= speedPerTick ? 0 : 1));
+        currentlyPlayingPlayer.x += round(speedPerTick * xSlopeCoeficient * (xdest < currentlyPlayingPlayer.x ? - 1 : (abs(xdest - currentlyPlayingPlayer.x)  <= speedPerTick ? 0 : 1)));
 
-        currentlyPlayingPlayer.y += speedPerTick * (ydest < currentlyPlayingPlayer.y ? - 1 : (abs(ydest - currentlyPlayingPlayer.y)  <= speedPerTick ? 0 : 1));
+        currentlyPlayingPlayer.y +=round( speedPerTick * ySlopeCoeficient* (ydest < currentlyPlayingPlayer.y ? - 1 : (abs(ydest - currentlyPlayingPlayer.y)  <= speedPerTick ? 0 : 1)));
       }
 
       break;
